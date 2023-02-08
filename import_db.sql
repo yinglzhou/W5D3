@@ -115,6 +115,13 @@ VALUES
         (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhao'));
 
 
+INSERT INTO
+    question_likes(user_like, user_id, question_id)
+VALUES
+    (TRUE, (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'),
+    )
+
+
 
 
 
