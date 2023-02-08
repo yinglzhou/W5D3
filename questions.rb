@@ -19,17 +19,20 @@ class User
         user.map { |col| User.new(col) }
     end
 
-    # def self.find_by_id(id)
-    #     user = QuestionsDatabase.instance.execute(<<-SQL id)
-    #     SELECT
-    #         *
-    #     FROM
-    #         users
-    #     WHERE
-    #         id = ?
-    #     SQL
-    #     User.new(user)
-    # end
+    def self.find_by_id(id)
+        id = QuestionsDatabase.instance.execute(<<-SQL, id)
+            SELECT
+                *
+            FROM
+                users
+            WHERE
+                id = ?
+        SQL
+        # id is an array containing a hash with keys as 'options' 
+        # [{"id"=>4, "fname"=>"Milner", "lname"=>"Chen"}]
+        return nil unless id.length > 0
+        User.new(id.first)
+    end
 
     def initialize(options)
         @id = options['id']
@@ -70,6 +73,36 @@ class Question
         question.map { |col| Question.new(col) }
     end
 
+    def self.find_by_id(id)
+        id = QuestionsDatabase.instance.execute(<<-SQL, id)
+            SELECT
+                *
+            FROM
+                questions
+            WHERE
+                id = ?
+        SQL
+        return nil unless id.length > 0
+        Question.new(id.first)
+    end
+
+
+    # [{"id"=>4, "fname"=>"Milner", "lname"=>"Chen"}]
+    def self.find_by_author_id(author_id)
+        author_id = QuestionsDatabase.instance.execute(<<-SQL, author_id)
+            SELECT
+                *
+            FROM
+                questions
+            WHERE
+                associated_author_id = ?
+        SQL
+        return nil unless author_id.length > 0
+        Question.new(author_id.first)
+    end
+
+
+
     def initialize(options)
         @id = options['id']
         @title = options['title']
@@ -86,5 +119,17 @@ class Question
                 (?, ?, ?)
         SQL
         @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+
+    def update
+        raise "#{self} not in database" unless @id
+        QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @associated_author_id, @id)
+            UPDATE
+                questions
+            SET
+                title = ?, body = ?, associated_author_id = ?
+            WHERE
+                id = ?
+        SQL
     end
 end
