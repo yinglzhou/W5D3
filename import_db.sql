@@ -1,4 +1,9 @@
-PRAGMA foreign_keys = ON
+PRAGMA foreign_keys = ON;
+DROP TABLE IF EXISTS question_likes;
+DROP TABLE IF EXISTS replies;
+DROP TABLE IF EXISTS question_follows;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
@@ -10,7 +15,7 @@ CREATE TABLE questions(
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
-    associated_author_id INTEGER NOT NULL
+    associated_author_id INTEGER NOT NULL,
 
     FOREIGN KEY(associated_author_id) REFERENCES users(id)
 );
@@ -40,7 +45,7 @@ CREATE TABLE question_likes(
     id INTEGER PRIMARY KEY, 
     user_like BOOLEAN NOT NULL,
     user_id INTEGER NOT NULL,
-    question_id INTEGER NOT NULL
+    question_id INTEGER NOT NULL,
 
     FOREIGN KEY (question_id) REFERENCES questions(id)
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -58,9 +63,9 @@ VALUES
 INSERT INTO
     questions(title, body, associated_author_id)
 VALUES
-    ('Pets', 'What kind of pets do you have?', (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhou'))
-    ('Fruits', 'What kind of fruits do you like?', (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'))
-    ('Colors', 'What kind of colors do you like?', (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhou'))
+    ('Pets', 'What kind of pets do you have?', (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhou')),
+    ('Fruits', 'What kind of fruits do you like?', (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan')),
+    ('Colors', 'What kind of colors do you like?', (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhou')),
     ('Languages', 'What kind of coding language do you use?', (SELECT id FROM users WHERE fname = 'Alvin' AND lname = 'Zablan'));
 
 
@@ -112,13 +117,13 @@ VALUES
         AND subject_question_id = (SELECT id FROM questions WHERE title = 'Languages') 
         AND (SELECT id FROM users WHERE fname = 'Alvin' AND lname = 'Zablan')),
         'I also use Ruby',
-        (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhao'));
+        (SELECT id FROM users WHERE fname = 'Ying' AND lname = 'Zhou'));
 
 
 INSERT INTO
     question_likes(user_like, user_id, question_id)
 VALUES
-    (TRUE, (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'), (SELECT id FROM questions WHERE title = 'Colors'))
+    (TRUE, (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'), (SELECT id FROM questions WHERE title = 'Colors'));
 
 
 
