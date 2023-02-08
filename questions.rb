@@ -19,6 +19,18 @@ class User
         user.map { |col| User.new(col) }
     end
 
+    # def self.find_by_id(id)
+    #     user = QuestionsDatabase.instance.execute(<<-SQL id)
+    #     SELECT
+    #         *
+    #     FROM
+    #         users
+    #     WHERE
+    #         id = ?
+    #     SQL
+    #     User.new(user)
+    # end
+
     def initialize(options)
         @id = options['id']
         @fname = options['fname']
@@ -48,4 +60,31 @@ class User
         SQL
     end
 
+end
+
+class Question
+    attr_accessor :title, :body, :associated_author_id
+
+    def self.all
+        question = QuestionsDatabase.instance.execute("SELECT * FROM questions")
+        question.map { |col| Question.new(col) }
+    end
+
+    def initialize(options)
+        @id = options['id']
+        @title = options['title']
+        @body = options['body']
+        @associated_author_id = options['associated_author_id']
+    end
+
+    def create
+        raise "#{self} already in database" if @id
+        QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @associated_author_id)
+            INSERT INTO
+                questions(title, body, associated_author_id)
+            VALUES
+                (?, ?, ?)
+        SQL
+        @id = QuestionsDatabase.instance.last_insert_row_id
+    end
 end
