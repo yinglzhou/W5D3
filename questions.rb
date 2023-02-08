@@ -13,6 +13,7 @@ class QuestionsDatabase < SQLite3::Database
 end
 
 class User
+    attr_accessor :fname, :lname
     def self.all
         user = QuestionsDatabase.instance.execute("SELECT * FROM users")
         user.map { |col| User.new(col) }
