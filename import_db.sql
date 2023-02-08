@@ -118,8 +118,7 @@ VALUES
 INSERT INTO
     question_likes(user_like, user_id, question_id)
 VALUES
-    (TRUE, (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'),
-    )
+    (TRUE, (SELECT id FROM users WHERE fname = 'Kevin' AND lname = 'Chan'), (SELECT id FROM questions WHERE title = 'Colors'))
 
 
 
